@@ -22,8 +22,7 @@ ui <- fluidPage(
                   choices = NULL),
       
       hr(),
-      
-      
+
       a("Download Raw Data", 
         href = "https://github.com/jacobawinter/zmb_cdf/blob/main/data/cdf_data_clean.csv", 
         target = "_blank"),
@@ -125,7 +124,7 @@ server <- function(input, output, session) {
       "<strong>%s</strong><br/>%s: %s",
       constituency_name,
       nice_col_name,
-      ifelse(is.na(values), "No data", format(round(values, 0), big.mark = ","))
+      ifelse(is.na(values), "No data", format(round(values, 2), big.mark = ","))
     ) %>% lapply(htmltools::HTML)
     
     # Render map
