@@ -9,14 +9,35 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
+      p("Zambia's Auditor General's Office has published detailed audits of the Constituency Development Fund. This website was created by digitizing the data from the appendices of these reports. Values shown are in millions of Kwacha."),
+      
+      p("Select a year and indicator to visualize on the map."),
+      
       selectInput("year", 
                   "Select Year:", 
                   choices = NULL),
       
       selectInput("column", 
                   "Select Column to Map:", 
-                  choices = NULL)
+                  choices = NULL),
+      
+      hr(),
+      
+      
+      a("Download Raw Data", 
+        href = "https://github.com/jacobawinter/zmb_cdf/blob/main/data/cdf_data_clean.csv", 
+        target = "_blank"),
+      hr(),
+      
+      p(
+        "Created by Jacob Winter. If you have questions or find mistakes, please",
+        a("get in touch!", 
+          href = "https://jacobawinter.github.io/", 
+          target = "_blank")
+      ),
+      
     ),
+    
     
     mainPanel(
       leafletOutput("map", height = 600)
@@ -97,11 +118,12 @@ server <- function(input, output, session) {
     
     # Get nice column name for display
     nice_col_name <- make_nice_name(input$column)
+    constituency_name <- make_nice_name(geo_data[[2]])
 
     # Create labels
     labels <- sprintf(
       "<strong>%s</strong><br/>%s: %s",
-      geo_data[[2]],
+      constituency_name,
       nice_col_name,
       ifelse(is.na(values), "No data", format(round(values, 0), big.mark = ","))
     ) %>% lapply(htmltools::HTML)
@@ -133,7 +155,8 @@ server <- function(input, output, session) {
         values = ~values,
         opacity = 0.7,
         title = nice_col_name,
-        position = "bottomright"
+        position = "bottomright",
+        labFormat = labelFormat(transform = function(x) sort(x, decreasing = TRUE))
       )
   })
 }
